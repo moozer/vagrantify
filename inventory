@@ -1,0 +1,4 @@
+#jumper ansible_ssh_port=5555 ansible_ssh_host=192.168.1.50
+ob ansible_ssh_user=vagrant ansible_ssh_host=ob ansible_python_interpreter=/usr/local/bin/python ansible_become_pass=vagrant
+
+

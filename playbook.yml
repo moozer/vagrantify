@@ -1,0 +1,30 @@
+# follows the minimal vagrant install guide for boxes
+# see
+#    http://docs.vagrantup.com/v2/boxes/base.html
+#
+# in the inventory file, login using vagrant
+
+- hosts: all
+  vars:
+    vagrant_pass: $2b$10$8pmWYSM4C1FwImi6.C44MugdKrlFVt5sP2UCN6nq/BnUH.Qcv3CFG # vagrant
+    root_pass: $2b$10$8pmWYSM4C1FwImi6.C44MugdKrlFVt5sP2UCN6nq/BnUH.Qcv3CFG # vagrant
+  become: yes
+  become_user: root
+  become_method: su
+
+  tasks:
+  - user: name=vagrant comment="Vagrant user" password={{vagrant_pass}}
+
+
+#  tasks:
+#  - name: ensure apache is at the latest version
+#    yum: pkg=httpd state=latest
+#  - name: write the apache config file
+#    template: src=/srv/httpd.j2 dest=/etc/httpd.conf
+#    notify:
+#    - restart apache
+#  - name: ensure apache is running (and enable it at boot)
+#    service: name=httpd state=started enabled=yes
+#  handlers:
+#    - name: restart apache
+#      service: name=httpd state=restarted
