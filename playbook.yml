@@ -13,7 +13,6 @@
   become_method: su
 
   tasks:
-  - shell: echo 'Setting default passwords'
   - user: name=vagrant comment="Vagrant user" password={{vagrant_pass}}
   - user: name=root password={{vagrant_pass}}
 
