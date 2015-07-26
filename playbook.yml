@@ -13,8 +13,9 @@
   become_method: su
 
   tasks:
+  - shell: echo 'Setting default passwords'
   - user: name=vagrant comment="Vagrant user" password={{vagrant_pass}}
-
+  - user: name=root password={{vagrant_pass}}
 
 #  tasks:
 #  - name: ensure apache is at the latest version
