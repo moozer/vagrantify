@@ -16,6 +16,9 @@
   - user: name=vagrant comment="Vagrant user" password={{vagrant_pass}}
   - user: name=root password={{vagrant_pass}}
 
+  tasks:
+  - lineinfile: dest=/etc/ssh/sshd_config line="UseDNS no"
+
 #  tasks:
 #  - name: ensure apache is at the latest version
 #    yum: pkg=httpd state=latest
