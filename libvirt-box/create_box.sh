@@ -66,7 +66,7 @@ mkdir -p "$TMP_DIR"
 # ensure that it's moved back / removed again
 if [[ -n $(backing "$IMG") ]]; then
     echo "==> Image has backing image, copying image and rebasing ..."
-    trap "rm -rf $TMP_DIR" EXIT
+    # trap "rm -rf $TMP_DIR" EXIT
     cp "$IMG" "$TMP_IMG"
     rebase "$TMP_IMG"
 else
@@ -75,7 +75,8 @@ else
     fi
 
     # move the image to get a speed-up and use less space on disk
-    trap 'mv "$TMP_IMG" "$IMG"; rm -rf "$TMP_DIR"' EXIT
+    trap 'mv "$TMP_IMG" "$IMG"' EXIT
+    #trap 'mv "$TMP_IMG" "$IMG"; rm -rf "$TMP_DIR"' EXIT
     mv "$IMG" "$TMP_IMG"
 fi
 
@@ -83,15 +84,23 @@ cd "$TMP_DIR"
 
 IMG_SIZE=$(qemu-img info "$TMP_IMG" | grep 'virtual size' | awk '{print $3;}' | tr -d 'G')
 
-cat > metadata.json <<EOF
+# use default unless .base exists
+if [ ! -f $CWD/metadata.json.base ]; then
+
+  cat > metadata.json <<EOF
 {
     "provider": "libvirt",
     "format": "qcow2",
     "virtual_size": ${IMG_SIZE}
 }
 EOF
+else
+  sed "s/IMGSIZE/$IMGSIZE/g" $CWD/metadata.json.base metadata.json
+fi
 
-cat > Vagrantfile <<EOF
+# use default unless .base exists
+if [ ! -f $CWD/Vagrantfile.base ]; then
+  cat > Vagrantfile <<EOF
 Vagrant.configure("2") do |config|
 
   config.vm.provider :libvirt do |libvirt|
@@ -104,6 +113,12 @@ Vagrant.configure("2") do |config|
   end
 end
 EOF
+else
+  # else just use the .base file
+  cp $CWD/Vagrantfile.base Vagrantfile
+fi
+
+
 
 echo "==> Creating box, tarring and gzipping"
 
