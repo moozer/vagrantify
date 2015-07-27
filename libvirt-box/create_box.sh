@@ -42,6 +42,9 @@ IMG=$(readlink -e "$1")
 
 IMG_DIR=$(dirname "$IMG")
 IMG_BASENAME=$(basename "$IMG")
+echo "==> using image: $IMG"
+echo "==> using image dir: $IMG_DIR"
+echo "==> using image name: $IMG_BASENAME"
 
 BOX=${2:-}
 # If no box name is supplied infer one from image name
@@ -51,6 +54,9 @@ if [[ -z "$BOX" ]]; then
 else
     BOX_NAME=$(basename "${BOX%.*}")
 fi
+
+echo "==> using box name: $BOX_NAME"
+echo "==> using box: $BOX"
 
 [[ -f "$BOX" ]] && error "'$BOX': Already exists"
 
@@ -82,10 +88,12 @@ fi
 
 cd "$TMP_DIR"
 
-IMG_SIZE=$(qemu-img info "$TMP_IMG" | grep 'virtual size' | awk '{print $3;}' | tr -d 'G')
+IMG_SIZE=$(qemu-img info "$TMP_IMG" | grep 'virtual size' | awk '{print $3;}' | tr -d 'G' | cut -d '.' -f1)
+echo "==> image size: $IMG_SIZE"
 
 # use default unless .base exists
 if [ ! -f $CWD/metadata.json.base ]; then
+  echo "==> using default metadata config"
 
   cat > metadata.json <<EOF
 {
@@ -95,11 +103,14 @@ if [ ! -f $CWD/metadata.json.base ]; then
 }
 EOF
 else
-  sed "s/IMGSIZE/$IMGSIZE/g" $CWD/metadata.json.base metadata.json
+  echo "==> using metadata from base file"
+  sed "s/IMGSIZE/"$IMG_SIZE"/g" $CWD/metadata.json.base > metadata.json
+  sed "s/IMGSIZE/"$IMG_SIZE"/g" $CWD/metadata.json.base
 fi
 
 # use default unless .base exists
 if [ ! -f $CWD/Vagrantfile.base ]; then
+  echo "==> using default Vagrantfile"
   cat > Vagrantfile <<EOF
 Vagrant.configure("2") do |config|
 
@@ -115,6 +126,7 @@ end
 EOF
 else
   # else just use the .base file
+  echo "==> using Vagrantfile from base"
   cp $CWD/Vagrantfile.base Vagrantfile
 fi
 
