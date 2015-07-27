@@ -12,12 +12,21 @@
   become_user: root
   become_method: su
 
+  # handling default passwords
   tasks:
   - user: name=vagrant comment="Vagrant user" password={{vagrant_pass}}
   - user: name=root password={{vagrant_pass}}
 
+  # sshd and sudo config
+  # vagrant is allowed to do sudo with no password
   tasks:
   - lineinfile: dest=/etc/ssh/sshd_config line="UseDNS no"
+  - lineinfile: "dest=/etc/sudoers line='vagrant ALL=(ALL) NOPASSWD: SETENV: ALL'"
+
+  tasks:
+  - copy: src=vagrant.pub dest=/home/vagrant/.ssh/autorized_keys owner=vagrant group=vagrant mode=0700
+
+
 
 #  tasks:
 #  - name: ensure apache is at the latest version
