@@ -26,6 +26,14 @@ rebase(){
     [[ "$?" -ne 0 ]] && error "Error during rebase"
 }
 
+# Shrink the image
+shrink(){
+    local img=${1}
+    mv $img ${img}_backup
+    qemu-img convert -O qcow2 ${img}_backup $img
+    [[ "$?" -ne 0 ]] && error "Error during shrinking"
+}
+
 # Is absolute path
 isabspath(){
     local path=${1}
@@ -83,8 +91,12 @@ else
     # move the image to get a speed-up and use less space on disk
     trap 'mv "$TMP_IMG" "$IMG"' EXIT
     #trap 'mv "$TMP_IMG" "$IMG"; rm -rf "$TMP_DIR"' EXIT
+
     mv "$IMG" "$TMP_IMG"
 fi
+
+echo "==> recompressing image"
+shrink "$TMP_IMG"
 
 cd "$TMP_DIR"
 
@@ -105,7 +117,6 @@ EOF
 else
   echo "==> using metadata from base file"
   sed "s/IMGSIZE/"$IMG_SIZE"/g" $CWD/metadata.json.base > metadata.json
-  sed "s/IMGSIZE/"$IMG_SIZE"/g" $CWD/metadata.json.base
 fi
 
 # use default unless .base exists
