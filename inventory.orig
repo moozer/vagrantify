@@ -1,0 +1,3 @@
+ob ansible_ssh_user=vagrant ansible_ssh_host=192.168.122.209 ansible_python_interpreter=/usr/local/bin/python ansible_become_pass=vagrant
+
+
