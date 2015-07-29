@@ -34,6 +34,6 @@ Issues:
   Since vagrant and root passwords and key should be changed
   anyway, we will leave it for now.
 
-  Add *config.ssh.insert_key = "false"* to Vagrantfile
+  Added *config.ssh.insert_key = false* to Vagrantfile
 
 

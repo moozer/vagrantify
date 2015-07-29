@@ -17,6 +17,9 @@ Vagrant.configure("2") do |config|
   # bash is not installed by default
   config.ssh.shell = "/bin/ksh"
 
+  # disable replacement of insecure keys
+  config.ssh.insert_key = false
+
   # some systems defaults to nfs
   config.vm.synced_folder ".", "/vagrant", type: "rsync"
 
