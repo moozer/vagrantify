@@ -24,23 +24,18 @@
   # vagrant is allowed to do sudo with no password
   - name: set no use DNS in sshd
     lineinfile: dest=/etc/ssh/sshd_config state=present line="UseDNS no"
+
   - name: set sudoer on vagrant user
     lineinfile: "dest=/etc/sudoers state=present line='vagrant ALL=(ALL) NOPASSWD: SETENV: ALL'"
 
   - name: Copy insecure public key
     copy: src=vagrant.pub dest=/home/vagrant/.ssh/authorized_keys owner=vagrant group=vagrant mode=0700
 
-
-
-#  tasks:
-#  - name: ensure apache is at the latest version
-#    yum: pkg=httpd state=latest
-#  - name: write the apache config file
-#    template: src=/srv/httpd.j2 dest=/etc/httpd.conf
-#    notify:
-#    - restart apache
-#  - name: ensure apache is running (and enable it at boot)
-#    service: name=httpd state=started enabled=yes
-#  handlers:
-#    - name: restart apache
-#      service: name=httpd state=restarted
+  # vagrant used sed -i which openbsd doesn't support.
+  # install gsed and symlink it
+  - name: install gsed, and make symlinks
+    command: pkg_add gsed
+  - name: create bin dir
+    file: path=/home/vagrant/bin state=directory owner=vagrant group=vagrant
+  - name: make symlinks
+    file: dest=/home/vagrant/bin/sed src=/usr/local/bin/gsed state=link
