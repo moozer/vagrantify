@@ -24,3 +24,16 @@ Usage:
 
 Go here for details on how to create a vagrant box. 
 - https://moozing.wordpress.com/2015/07/29/pushing-libvirt-vagrant-boxes-to-hashicorp/
+
+
+Issues:
+-------
+
+* "sed -i ..." is not supported by 5.7, but will be in 5.8
+  This is relevant for the automatic replace of insecure keys.
+  Since vagrant and root passwords and key should be changed
+  anyway, we will leave it for now.
+
+  Add *config.ssh.insert_key = "false"* to Vagrantfile
+
+

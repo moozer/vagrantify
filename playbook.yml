@@ -31,11 +31,3 @@
   - name: Copy insecure public key
     copy: src=vagrant.pub dest=/home/vagrant/.ssh/authorized_keys owner=vagrant group=vagrant mode=0700
 
-  # vagrant used sed -i which openbsd doesn't support.
-  # install gsed and symlink it
-  - name: install gsed, and make symlinks
-    command: pkg_add gsed
-  - name: create bin dir
-    file: path=/home/vagrant/bin state=directory owner=vagrant group=vagrant
-  - name: make symlinks
-    file: dest=/home/vagrant/bin/sed src=/usr/local/bin/gsed state=link
